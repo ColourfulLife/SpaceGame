@@ -59,10 +59,10 @@ void SceneGame::update(float dt)
 	//碰撞检测
 	HitCheck();
 
-	_brainControlShow->Brain();  //忘记调用这个，导致脑波相关的两个进度条不显示
+	//_brainControlShow->Brain();  //忘记调用这个，导致脑波相关的两个进度条不显示
 
 	//设置游戏显示生命值和分数。
-	_brainControlShow->SetLabelLives(_brainControlShow->_lives, 100);
+	//_brainControlShow->SetLabelLives(_brainControlShow->_lives, 100);
 }
 
 void SceneGame::createHero()
