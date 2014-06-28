@@ -30,6 +30,25 @@ bool AppDelegate::applicationDidFinishLaunching() {
     // set FPS. the default value is 1.0/60 if you don't call this
     director->setAnimationInterval(1.0 / 60);
 
+	// ¼ÓÔØ±¬Õ¨¶¯»­
+ 	SpriteFrameCache* cache = SpriteFrameCache::getInstance();
+ 	cache->addSpriteFramesWithFile("SceneGameTwo/explosion.plist");
+ 
+ 	Vector<SpriteFrame*> arr;
+ 	for (int i = 0; i < 35; ++i)
+ 	{
+ 		//"explosion_01.png"
+ 		char filename[48];
+ 		const char* name1 = "explosion_%02d.png";
+ 		sprintf(filename, name1, i+1);
+		//cache->spriteFrameByName()
+		SpriteFrame* frame = cache->spriteFrameByName(filename);
+ 		arr.pushBack(frame);
+ 	}
+ 
+ 	Animation* animation = Animation::createWithSpriteFrames(arr, 1.0f / 35);
+ 	AnimationCache::getInstance()->addAnimation(animation, BOOM);
+
     // create a scene. it's an autorelease object
     auto scene = Util::scene(SceneStart::create());
 
