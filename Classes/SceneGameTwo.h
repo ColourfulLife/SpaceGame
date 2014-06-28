@@ -4,12 +4,15 @@
 #include "BrainControl.h"
 #include "LayerSBGOfParallax.h"
 #include "SimpleAudioEngine.h"
+#include "LayerScrollBackGround.h"
+#include "Enemy.h"
+
 using namespace CocosDenshion;
 
-#define KNUMASTEROIDS 20  //创建星球的数量
+#define KNUMASTEROIDS 10  //创建星球的数量
 #define KNUMLASERS 5      //创建激光的数量
 
-class SceneGameTwo : public LayerSBGOfParallax
+class SceneGameTwo : public LayerScrollBackGround
 {
 public:
 	CREATE_FUNC(SceneGameTwo);
@@ -22,12 +25,15 @@ public:
 	enum {EN_BACKGROUND_ZORDER=-1,EN_HERO_ZORDER=10};
 
 	Sprite* _ship;
-	Vector<Sprite*> _asteroids;   //储存创建的星球
-	Vector<Sprite*> _stones;  //储存创建的陨石
+	Vector<Enemy*> _asteroids;   //储存创建的星球
+	Vector<Enemy*> _stones;  //储存创建的陨石
+	Vector<Enemy*> _ufos;    //储存ufo
 	int _nextAsteroid;
 	float _nextAsteroidSpawn;     //指示下一个星球出现的时间点。我们会在update循环中一直检测这个变量的值。
 	int _nextStone;
 	float _nextStoneSpawn;
+	int _nextUfo;
+	float _nextUfoSpawn;
 	Vector<Sprite*> _shipLasers;  //储存创建的激光
 	int _nextShipLaser;
 
@@ -39,6 +45,7 @@ public:
 	void createGrainStar();     //使用粒子系统创建星星
 	void InitAsteroid();		//初始化星球
 	void InitStones();          //初始化陨石
+	void InitUFO();         
 	void AsteroidBlast(const Point& point);		//星球爆炸
 	void InitShipLasers();		//初始化激光
 	void initAudio();			//加载游戏中需要用到的音乐
@@ -57,7 +64,9 @@ public:
 	void ResponseAcceleration(float dt); //响应加速计
 	void GenerationAsteroid();  //产生星球
 	void GenerationStone();  //产生快速移动的陨石
+	void GenerationUFO();   //产生UFO
 	void HitCheck();  //碰撞检测
+	void HitCheckWithUfo();
 };
 
 #endif
