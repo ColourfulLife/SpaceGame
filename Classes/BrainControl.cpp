@@ -165,6 +165,7 @@ int BrainControl::getHighestHistorySorce()
 	{
 		return UserDefault::getInstance()->getIntegerForKey("HighestScore", 0);//读取历史最高分
 	}
+
 	return 0;
 }
 
@@ -175,4 +176,5 @@ void BrainControl::setHighestHistorySorce(int score)
 	{
 		UserDefault::getInstance()->setIntegerForKey("HighestScore", score);//修改存档
 	}
+
 }
