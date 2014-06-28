@@ -3,25 +3,22 @@
 
 bool SceneGame::init()
 {
-	LayerScrollBackGround::init();
+	LayerSBGOfParallax::init();
 
 	_brainControlShow = BrainControl::create();
 	this->addChild(_brainControlShow);
 	_brainControlShow->setZOrder(100);
 
 	_nextAsteroid = 0;
-	_nextUfo = 0;
 	_nextShipLaser = 0;
 
 	//把所有的图片存储在一张图片里面，然后使用这个 BatchNode 
 	//就可以仅使用一次 opengl 调用来做所有的绘图操作。
 	//使用一张大的图片创建一个 CCSpriteBatchNode 对象来批处理所有的对
 	//象的描绘操作。接收的参数是 Sprites.pvr.ccz。
-	_batchNode = SpriteBatchNode::create("SceneGame/ShipAsteroidStone.png");
+	_batchNode = SpriteBatchNode::create("Sprites.pvr.ccz");
 	this->addChild(_batchNode);
-	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("SceneGame/ShipAsteroidStone.plist");
-
-
+	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Sprites.plist");
 
 	//英雄飞船出场
 	createHero();
@@ -31,11 +28,6 @@ bool SceneGame::init()
 
 	//初始化星球
 	InitAsteroid();
-
-	//初始化陨石
-	InitStones();
-
-	InitUFO();
 
 	//初始化激光
 	InitShipLasers();
@@ -56,22 +48,16 @@ bool SceneGame::init()
 
 void SceneGame::update(float dt)
 {
-	//updateCallByChild(dt);  //调用父类的方法，让背景动起来
+	updateCallByChild(dt);  //调用父类的方法，让背景动起来
 
 	//响应加速计
-	//ResponseAcceleration(dt);
+	ResponseAcceleration(dt);
 
 	//产生星球
 	GenerationAsteroid();
 
-	//产生陨石
-	GenerationStone();
-
-	GenerationUFO();
-
 	//碰撞检测
 	HitCheck();
-	HitCheckWithUfo();
 
 	//_brainControlShow->Brain();  //忘记调用这个，导致脑波相关的两个进度条不显示
 
@@ -81,10 +67,10 @@ void SceneGame::update(float dt)
 
 void SceneGame::createHero()
 {
-	_ship = Sprite::createWithSpriteFrameName("airplane02.png");
+	_ship = Sprite::createWithSpriteFrameName("SpaceFlier_sm_1.png");
 	_ship->setPosition(Point(winSize.width *0.1, winSize.height *0.5));
 	_batchNode->addChild(_ship, EN_HERO_ZORDER);
-	ShipAccelerate(_ship->getPosition());
+	/*ShipAccelerate(_ship->getPosition());*/
 }
 
 void SceneGame::createGrainStar()
@@ -96,48 +82,13 @@ void SceneGame::createGrainStar()
 
 void SceneGame::InitAsteroid()
 {
-	char filename[48];
 	for (int i = 0; i < KNUMASTEROIDS; ++i)
 	{
-		const char* name1 = "block%02d.png";
-		sprintf(filename, name1, i % 3 + 1);
-	
-		Enemy* asteroid = Enemy::initWithFileName(filename);
+		auto asteroid = Sprite::createWithSpriteFrameName("asteroid.png");
 
 		asteroid->setVisible(false);
 		_batchNode->addChild(asteroid, 5);
 		_asteroids.pushBack(asteroid);
-	}
-}
-
-void SceneGame::InitStones()
-{
-	char filename[48];
-	for (int i = 0; i < KNUMASTEROIDS; ++i)
-	{
-		const char* name = "stone_%02d.png";
-		sprintf(filename, name, i % 3 + 1);
-
-		Enemy* stone = Enemy::initWithFileName(filename);
-
-		stone->setVisible(false);
-		_batchNode->addChild(stone, 5);
-		_stones.pushBack(stone);
-	}
-}
-
-void SceneGame::InitUFO()
-{
-	char filename[48];
-	for (int i = 0; i < KNUMASTEROIDS; ++i)
-	{
-		const char* filename = "airplane-d.png";
-
-		Enemy* ufo = Enemy::initWithFileName(filename);
-
-		ufo->setVisible(false);
-		_batchNode->addChild(ufo, 5);
-		_ufos.pushBack(ufo);
 	}
 }
 
@@ -162,7 +113,7 @@ void SceneGame::InitShipLasers()
 {
 	for (int i = 0; i < KNUMLASERS; ++i)
 	{
-		auto shipLaser = Sprite::createWithSpriteFrameName("shell.png");
+		auto shipLaser = Sprite::createWithSpriteFrameName("laserbeam_blue.png");
 
 		shipLaser->setVisible(false);
 		_batchNode->addChild(shipLaser);
@@ -271,14 +222,14 @@ void SceneGame::GenerationAsteroid()
 	float curTimeMillis = getTimeTick();
 	if (curTimeMillis > _nextAsteroidSpawn)
 	{
-		//0.20, 1.0
-		float randMillisecs = randomValueBetween(1.0,2.0) * 1000;
+
+		float randMillisecs = randomValueBetween(0.20, 1.0) * 1000;
 		_nextAsteroidSpawn = randMillisecs + curTimeMillis;
 
 		float randY = randomValueBetween(0.0, winSize.height);
 		float randDuration = randomValueBetween(2.0, 10.0);
 
-		Enemy *asteroid = _asteroids.at(_nextAsteroid);
+		Sprite *asteroid = _asteroids.at(_nextAsteroid);
 		_nextAsteroid++;
 
 		if (_nextAsteroid >= _asteroids.size())
@@ -296,177 +247,32 @@ void SceneGame::GenerationAsteroid()
 	}
 }
 
-void SceneGame::GenerationStone()
-{
-	float curTimeMillis = getTimeTick();
-	if (curTimeMillis > _nextStoneSpawn)
-	{
-
-		float randMillisecs = randomValueBetween(0.20, 1.0) * 1000;
-		_nextStoneSpawn = randMillisecs + curTimeMillis;
-
-		float randY = randomValueBetween(0.0, winSize.height);
-		float randDuration = randomValueBetween(2.0,5.0);
-
-		Enemy *stone = _stones.at(_nextAsteroid);
-		_nextStone++;
-
-		if (_nextStone >= _stones.size())
-			_nextStone = 0;
-
-		stone->stopAllActions();
-		stone->setPosition(Point(winSize.width + stone->getContentSize().width / 2, randY));
-		stone->setVisible(true);
-
-		stone->runAction(Sequence::create(
-			MoveBy::create(randDuration, Point(-winSize.width - stone->getContentSize().width, 0)),
-			CallFuncN::create(this, callfuncN_selector(SceneGame::setInvisible)),
-			NULL
-			));
-	}
-}
-
-void SceneGame::GenerationUFO()
-{
-	float curTimeMillis = getTimeTick();
-	if (curTimeMillis > _nextUfoSpawn)
-	{
-		float randMillisecs = randomValueBetween(0.20, 1.0) * 1000;
-		_nextUfoSpawn = randMillisecs + curTimeMillis;
-
-		float randY = randomValueBetween(0.0, winSize.height);
-		float randDuration = randomValueBetween(2.0, 10.0);
-
-		Enemy *ufo = _ufos.at(_nextUfo);
-		_nextUfo++;
-
-		if (_nextUfo >= _ufos.size())
-			_nextUfo = 0;
-
-		ufo->stopAllActions();
-		ufo->setPosition(Point(winSize.width + ufo->getContentSize().width / 2, randY));
-		ufo->setVisible(true);
-
-		ufo->runAction(Sequence::create(
-			MoveBy::create(randDuration, Point(-winSize.width - ufo->getContentSize().width, 0)),
-			CallFuncN::create(this, callfuncN_selector(SceneGame::setInvisible)),
-			NULL
-			));
-	}
-}
-
-//void SceneGame::HitCheck()
-//{
-//	Vector<Enemy*>::iterator itAster,itLaser;
-//	for (itAster = _asteroids.begin(); itAster != _asteroids.end(); itAster++)
-//	{
-//		auto *asteroid = (Sprite *)*itAster;
-//		if (!asteroid->isVisible())
-//			continue;
-//		for (itLaser = _shipLasers.begin(); itLaser != _shipLasers.end(); itLaser++)
-//		{
-//			auto *shipLaser = (Sprite *)*itLaser;
-//			if (!shipLaser->isVisible())
-//				continue;
-//			if (shipLaser->boundingBox().intersectsRect(asteroid->boundingBox()))
-//			{
-//				shipLaser->setVisible(false);
-//				asteroid->setVisible(false);
-//				AsteroidBlast(asteroid->getPosition());
-//				continue;
-//			}
-//		}
-//		if (_ship->boundingBox().intersectsRect(asteroid->boundingBox()))
-//		{
-//			SimpleAudioEngine::getInstance()->playEffect("explosion_large.wav");
-//			asteroid->setVisible(false);
-//			AsteroidBlast(asteroid->getPosition());
-//		}
-//	}
-//}
-
 void SceneGame::HitCheck()
 {
-	Vector<Enemy*>::iterator itAster,itStone;
+	Vector<Sprite*>::iterator itAster, itLaser;
 	for (itAster = _asteroids.begin(); itAster != _asteroids.end(); itAster++)
 	{
-		auto *asteroid = (Enemy *)*itAster;
-
+		auto *asteroid = (Sprite *)*itAster;
 		if (!asteroid->isVisible())
-			continue;
-
-		if (_ship->boundingBox().intersectsRect(asteroid->boundingBox()))
-		{
-			SimpleAudioEngine::getInstance()->playEffect("explosion_large.wav");
-			asteroid->setVisible(false);
-			AsteroidBlast(asteroid->getPosition());
-		}
-	}
-
-	for (itStone = _stones.begin(); itStone != _stones.end(); itStone++)
-	{
-		auto *stone = (Enemy *)*itStone;
-
-		if (!stone->isVisible())
-			continue;
-
-		if (_ship->boundingBox().intersectsRect(stone->boundingBox()))
-		{
-			SimpleAudioEngine::getInstance()->playEffect("explosion_large.wav");
-			stone->setVisible(false);
-			AsteroidBlast(stone->getPosition());
-		}
-	}
-}
-
-void SceneGame::HitCheckWithUfo()
-{
-	Vector<Enemy*>::iterator itUfo;
-	Vector<Sprite*>::iterator itLaser;
-	for (itUfo = _ufos.begin(); itUfo != _ufos.end(); itUfo++)
-	{
-		auto *ufo = (Enemy *)*itUfo;
-		if (!ufo->isVisible())
 			continue;
 		for (itLaser = _shipLasers.begin(); itLaser != _shipLasers.end(); itLaser++)
 		{
 			auto *shipLaser = (Sprite *)*itLaser;
 			if (!shipLaser->isVisible())
 				continue;
-			if (shipLaser->boundingBox().intersectsRect(ufo->boundingBox()))
+			if (shipLaser->boundingBox().intersectsRect(asteroid->boundingBox()))
 			{
 				shipLaser->setVisible(false);
-				ufo->setVisible(false);
-
-				//播放飞碟爆炸动画
-				Animation* animation = AnimationCache::getInstance()->animationByName(BOOM);
-				Animate* animate = Animate::create(animation);
-				Sprite* enemy = Sprite::create();
-				addChild(enemy);
-				enemy->setPosition(ufo->getPosition());
-				CallFunc* callFunc = CallFunc::create(CC_CALLBACK_0(Enemy::removeFromParent, enemy));
-				Sequence* seq = Sequence::create(animate, callFunc, NULL);
-				enemy->runAction(seq);
-
-				break;
+				asteroid->setVisible(false);
+				AsteroidBlast(asteroid->getPosition());
+				continue;
 			}
 		}
-		if (_ship->boundingBox().intersectsRect(ufo->boundingBox()))
+		if (_ship->boundingBox().intersectsRect(asteroid->boundingBox()))
 		{
 			SimpleAudioEngine::getInstance()->playEffect("explosion_large.wav");
-			ufo->setVisible(false);
-
-			Animation* animation = AnimationCache::getInstance()->animationByName(BOOM);
-			Animate* animate = Animate::create(animation);
-
-			Sprite* enemy = Sprite::create();
-			enemy->setPosition(ufo->getPosition());
-			CallFunc* callFunc = CallFunc::create(CC_CALLBACK_0(Enemy::removeFromParent, enemy));
-
-			Sequence* seq = Sequence::create(animate, callFunc, NULL);
-			enemy->runAction(seq);
-
-			break;
+			asteroid->setVisible(false);
+			AsteroidBlast(asteroid->getPosition());
 		}
 	}
 }

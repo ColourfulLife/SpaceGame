@@ -32,7 +32,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
 	// ¼ÓÔØ±¬Õ¨¶¯»­
  	SpriteFrameCache* cache = SpriteFrameCache::getInstance();
- 	cache->addSpriteFramesWithFile("SceneGame/explosion.plist");
+ 	cache->addSpriteFramesWithFile("SceneGameTwo/explosion.plist");
  
  	Vector<SpriteFrame*> arr;
  	for (int i = 0; i < 35; ++i)
