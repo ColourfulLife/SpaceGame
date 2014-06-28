@@ -50,15 +50,6 @@ bool SceneStart::init()
 
 	pStar1->runAction(pRepeatForever1);
 
-	//创建2个飞机图标
-	auto pPlane1 = Sprite::create("Image/ShipIcon.png");
-	pPlane1->setPosition(ccpAdd(ptCenter, ccp(-150,0)));
-	this->addChild(pPlane1, 2);
-
-	auto pPlane2 = Sprite::create("Image/ShipIcon.png");
-	pPlane2->setPosition(ccpAdd(ptCenter, ccp(150, 0)));
-	this->addChild(pPlane2, 2);
-
 	//添加返回键和菜单键响应
 	auto listener = EventListenerKeyboard::create();
 	listener->onKeyReleased = [&](EventKeyboard::KeyCode keyCode, Event* event)
