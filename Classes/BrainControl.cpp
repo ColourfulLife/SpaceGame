@@ -91,9 +91,9 @@ void BrainControl::update(float dt)
 	iAttention = getAttention();
 	_Attack = iAttention;
 #else
-	int iAttention = 50;
-	int iPoolSignal = 50;
-	int iBlink = 1;
+	iAttention = 50;
+	iPoolSignal = 50;
+	iBlink = 1;
 #endif
 	if (_PoolSignal > 100 - iPoolSignal / 2)
 		_PoolSignal--;

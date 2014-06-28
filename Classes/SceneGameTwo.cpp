@@ -438,13 +438,13 @@ void SceneGameTwo::HitCheckWithUfo()
 				shipLaser->setVisible(false);
 				ufo->setVisible(false);
 
+				//²¥·Å·Éµú±¬Õ¨¶¯»­
 				Animation* animation = AnimationCache::getInstance()->animationByName(BOOM);
 				Animate* animate = Animate::create(animation);
-
 				Sprite* enemy = Sprite::create();
+				addChild(enemy);
 				enemy->setPosition(ufo->getPosition());
 				CallFunc* callFunc = CallFunc::create(CC_CALLBACK_0(Enemy::removeFromParent, enemy));
-
 				Sequence* seq = Sequence::create(animate, callFunc, NULL);
 				enemy->runAction(seq);
 
