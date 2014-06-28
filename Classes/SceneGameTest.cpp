@@ -1,13 +1,13 @@
 #include "SceneGameTest.h"
 #include "LayerBackGround.h"
-#include "GameLevel.h"
+#include "SceneGame.h"
 
 bool SceneGameTest::init()
 {
 	Layer::init();
 
 	LayerBackButton* back = LayerBackButton::create([](Ref*){
-		Util::replaceScene(CGameLevel::create());
+		Util::replaceScene(SceneGame::create());
 	});
 	addChild(back);
 

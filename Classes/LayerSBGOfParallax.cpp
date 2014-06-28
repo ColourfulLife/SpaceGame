@@ -1,13 +1,13 @@
 #include "LayerSBGOfParallax.h"
 #include "SceneStart.h"
-#include "GameLevel.h"
+#include "SceneGame.h"
 
 bool LayerSBGOfParallax::init()
 {
 	Layer::init();
 
 	LayerBackButton* backSprite = LayerBackButton::create([](Ref*){
-		Util::replaceScene(CGameLevel::create());
+		Util::replaceScene(SceneGame::create());
 	});
 	addChild(backSprite);
 	backSprite->setZOrder(1000);

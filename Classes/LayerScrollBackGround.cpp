@@ -8,10 +8,10 @@ bool LayerScrollBackGround::init()
 	// ´´½¨¹ö¶¯µÄ±³¾°
 
 	// ±³¾°Í¼Æ¬
-	auto spriteFir = Sprite::create("SceneGameTwo/scrollbackground.png");
+	auto spriteFir = Sprite::create("SceneGame/scrollbackground.png");
 	addChild(spriteFir, EN_ORDER_BACKGROUND, EN_TAG_BACKGROUND);
 
-	auto spriteSec = Sprite::create("SceneGameTwo/scrollbackground.png");
+	auto spriteSec = Sprite::create("SceneGame/scrollbackground.png");
 	addChild(spriteSec, EN_ORDER_BACKGROUND, EN_TAG_BACKGROUND);
 
 	float width = spriteFir->boundingBox().size.height;
