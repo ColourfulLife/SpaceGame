@@ -60,6 +60,24 @@ bool SceneStart::init()
 	pPlane2->setPosition(ccpAdd(ptCenter, ccp(150, 0)));
 	this->addChild(pPlane2, 2);
 
+	//添加返回键和菜单键响应
+	auto listener = EventListenerKeyboard::create();
+	listener->onKeyReleased = [&](EventKeyboard::KeyCode keyCode, Event* event)
+	{
+		//返回键
+		if (keyCode == EventKeyboard::KeyCode::KEY_BACK_TAB ||
+			keyCode == EventKeyboard::KeyCode::KEY_ESCAPE)
+		{
+			Director::getInstance()->end();
+		}
+		//响应菜单键
+		else if (keyCode == EventKeyboard::KeyCode::KEY_MENU)
+		{
+
+		}
+	};
+	this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
+
 	return true;
 }
 

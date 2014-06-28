@@ -14,6 +14,7 @@ public:
 
 	CCParticleSun* m_pMeteorolite;	//тий╞льп╖
 	void move(float dt);
+
 };
 
 
