@@ -1,7 +1,7 @@
 #include "SceneStart.h"
 #include "SceneAbount.h"
 #include "SceneGame.h"
-#include "GameLevel.h"
+#include "SceneGame.h"
 
 bool SceneStart::init()
 {
@@ -13,7 +13,7 @@ bool SceneStart::init()
 	// 菜单
 	//2014/6/20 12:37修改，使用3.x新特性，让触摸消息处理代码更简洁
 	auto itemStart = MenuItemImage::create("btn1_normal.png", "btn1_push.png", [](Ref*){
-		Util::replaceScene(CGameLevel::create());
+		Util::replaceScene(SceneGame::create());
 	});
 	auto itemAbout = MenuItemImage::create("btn2_normal.png", "btn2_push.png", [](Ref*){
 		Util::replaceScene(SceneAbout::create());
