@@ -67,19 +67,27 @@ bool BrainControl::init()
 
 void BrainControl::update(float dt)
 {
-#if (CC_TARGET_PLATFORM==CC_PLATFORM_ANDROID)
 	int iAttention = 0;
 	int iPoolSignal = 0;
 	int iBlink = 0;
+#if (CC_TARGET_PLATFORM==CC_PLATFORM_ANDROID)
 
 	//void doStuff();
 	int getAttention();
 	int getPoorSignal();
 	int getBlink();
 
-	//doStuff();
 	iPoolSignal = getPoorSignal();
 	iBlink = getBlink();
+	iAttention = getAttention();
+	_Attack = iAttention;
+
+#elif(CC_TARGET_PLATFORM == CC_PLATFORM_WP8)
+	int getAttention();
+	int getPoorSignal();
+
+	iPoolSignal = getPoorSignal();
+	iBlink = 1;
 	iAttention = getAttention();
 	_Attack = iAttention;
 #else
@@ -94,20 +102,20 @@ void BrainControl::update(float dt)
 	progress2->setPercentage(_PoolSignal);
 
 	//ÅÐ¶ÏÐÅºÅ
-	if (iPoolSignal < 10)
+/*	if (iPoolSignal < 10)
 		return;
 
 	if (iAttention < 5)
 		return;
-
+		*/
 	if (iBlink)
 	{
-		iBlink = 0;
+		iBlink = 1;
 
 		//SimpleAudioEngine::getInstance()->playEffect("laser_enemy.wav");
 		_lives--;
-		iAttention = 30;
-		_Attack = 30;
+		//iAttention = 30;
+		//_Attack = 30;
 
 
 		//Õ£ÑÛ¾¦²¥·Å¶¯»­
