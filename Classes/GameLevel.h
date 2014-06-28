@@ -1,8 +1,6 @@
 #ifndef _GAMELEVEL_H_
 #define _GAMELEVEL_H_
 
-#include "LayerBack.h"
-//#include "Box2D/Box2D.h"
 #include "SimpleAudioEngine.h"
 #include "Util.h"
 
@@ -12,7 +10,7 @@ enum{
 	LEVEL_THREE,    
 };
 
-class CGameLevel : public LayerBack
+class CGameLevel : public Layer
 {
 public:
     virtual bool init();  
@@ -24,9 +22,6 @@ private:
 
 	/**	开始按钮的回调函数	*/
 	void setLevelStart(Object* pSender);
-
-	/**	返回按钮的回调函数	*/
-	void back(Object* pSender);
 
 	ParticleSun* m_pSun;		//太阳特效
 

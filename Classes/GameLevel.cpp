@@ -1,10 +1,12 @@
 #include "GameLevel.h"
 #include "SceneStart.h"
 #include "SceneGame.h"
+#include "SceneGameTwo.h"
+#include "SceneGameTest.h"
 
 bool CGameLevel::init()
 {
-	LayerBack::init();
+	Layer::init();
 
 	g_iGameLevel = 1;
 	size = winSize;
@@ -59,13 +61,23 @@ bool CGameLevel::init()
 	pStart->setSelectedSpriteFrame(pCache->spriteFrameByName("GameStartSelected.png"));
 	pStart->setPosition(ccp(size.width/2, size.height*0.2f));
 
+	MenuItemImage* backButton = MenuItemImage::create("btn_back_normal.png", "btn_back_press.png", [](Ref*){
+		Util::replaceScene(SceneStart::create());
+	});
+	backButton->setAnchorPoint(ccp(1, 0));
+	backButton->setPosition(winSize.width, 0);
+
+	Menu* menu = Menu::create();
+	addChild(menu);
+
 	/**	菜单	*/
-	_menu->addChild(pLevelOne);
-	_menu->addChild(pLevelTwo);
-	_menu->addChild(pLevelThree);
-	_menu->addChild(pStart);
-	_menu->setPosition(ccp(0, 0));
-	_menu->setZOrder(3);
+	menu->addChild(backButton);
+	menu->addChild(pLevelOne);
+	menu->addChild(pLevelTwo);
+	menu->addChild(pLevelThree);
+	menu->addChild(pStart);
+	menu->setPosition(ccp(0,0));
+	menu->setZOrder(3);
 
 	/**	选中特效	*/
 	m_pSun = ParticleSun::create();
@@ -73,9 +85,6 @@ bool CGameLevel::init()
 	m_pSun->setTexture(TextureCache::sharedTextureCache()->addImage("Image/Fire.png") );
 	m_pSun->setPosition(_pSprite->convertToNodeSpace(ccp(size.width*0.14f, size.height / 2)));
 	m_pSun->setStartSize(30);
-
-	_menuItem->setTarget(this, menu_selector(CGameLevel::back));
-	//_menuItem死活不出现
 
 	return true;
 }
@@ -107,17 +116,12 @@ void CGameLevel::setLevelStart(Object* pSender)
 		Director::getInstance()->replaceScene(Util::scene(SceneGame::create()));
 		break;
 	case LEVEL_TWO:
-		Director::getInstance()->replaceScene(Util::scene(SceneGame::create()));
+		Director::getInstance()->replaceScene(Util::scene(SceneGameTwo::create()));
 		break;
 	case LEVEL_THREE:
-		Director::getInstance()->replaceScene(Util::scene(SceneGame::create()));
+		Director::getInstance()->replaceScene(Util::scene(SceneGameTest::create()));
 		break;
 	default:
 		break;
 	}
-}
-
-void CGameLevel::back(Object* pSender)
-{
-	Director::getInstance()->replaceScene(Util::scene(SceneStart::create()));
 }

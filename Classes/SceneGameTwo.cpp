@@ -1,7 +1,7 @@
-#include "SceneGame.h"
+#include "SceneGameTwo.h"
 #include "SceneStart.h"
 
-bool SceneGame::init()
+bool SceneGameTwo::init()
 {
 	LayerSBGOfParallax::init();
 
@@ -16,9 +16,9 @@ bool SceneGame::init()
 	//就可以仅使用一次 opengl 调用来做所有的绘图操作。
 	//使用一张大的图片创建一个 CCSpriteBatchNode 对象来批处理所有的对
 	//象的描绘操作。接收的参数是 Sprites.pvr.ccz。
-	_batchNode = SpriteBatchNode::create("Sprites.pvr.ccz");
+	_batchNode = SpriteBatchNode::create("SceneGameTwo/ShipAsteroidStone.png");
 	this->addChild(_batchNode);
-	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("Sprites.plist");
+	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("SceneGameTwo/ShipAsteroidStone.plist");
 
 	//英雄飞船出场
 	createHero();
@@ -28,6 +28,9 @@ bool SceneGame::init()
 
 	//初始化星球
 	InitAsteroid();
+
+	//初始化陨石
+	InitStones();
 
 	//初始化激光
 	InitShipLasers();
@@ -46,15 +49,18 @@ bool SceneGame::init()
 	return true;
 }
 
-void SceneGame::update(float dt)
+void SceneGameTwo::update(float dt)
 {
 	updateCallByChild(dt);  //调用父类的方法，让背景动起来
 
 	//响应加速计
-	ResponseAcceleration(dt);
+	//ResponseAcceleration(dt);
 
 	//产生星球
 	GenerationAsteroid();
+
+	//产生陨石
+	GenerationStone();
 
 	//碰撞检测
 	HitCheck();
@@ -65,26 +71,30 @@ void SceneGame::update(float dt)
 	_brainControlShow->SetLabelLives(_brainControlShow->_lives, 100);
 }
 
-void SceneGame::createHero()
+void SceneGameTwo::createHero()
 {
-	_ship = Sprite::createWithSpriteFrameName("SpaceFlier_sm_1.png");
+	_ship = Sprite::createWithSpriteFrameName("airplane02.png");
 	_ship->setPosition(Point(winSize.width *0.1, winSize.height *0.5));
 	_batchNode->addChild(_ship, EN_HERO_ZORDER);
-	/*ShipAccelerate(_ship->getPosition());*/
+	ShipAccelerate(_ship->getPosition());
 }
 
-void SceneGame::createGrainStar()
+void SceneGameTwo::createGrainStar()
 {
-	SceneGame::addChild(ParticleSystemQuad::create("Stars1.plist"));
-	SceneGame::addChild(ParticleSystemQuad::create("Stars2.plist"));
-	SceneGame::addChild(ParticleSystemQuad::create("Stars3.plist"));
+	SceneGameTwo::addChild(ParticleSystemQuad::create("Stars1.plist"));
+	SceneGameTwo::addChild(ParticleSystemQuad::create("Stars2.plist"));
+	SceneGameTwo::addChild(ParticleSystemQuad::create("Stars3.plist"));
 }
 
-void SceneGame::InitAsteroid()
+void SceneGameTwo::InitAsteroid()
 {
+	char filename[48];
 	for (int i = 0; i < KNUMASTEROIDS; ++i)
 	{
-		auto asteroid = Sprite::createWithSpriteFrameName("asteroid.png");
+		const char* name1 = "block%02d.png";
+		sprintf(filename, name1, i % 3 + 1);
+	
+		auto asteroid = Sprite::createWithSpriteFrameName(filename);
 
 		asteroid->setVisible(false);
 		_batchNode->addChild(asteroid, 5);
@@ -92,8 +102,24 @@ void SceneGame::InitAsteroid()
 	}
 }
 
+void SceneGameTwo::InitStones()
+{
+	char filename[48];
+	for (int i = 0; i < KNUMASTEROIDS; ++i)
+	{
+		const char* name = "stone_%02d.png";
+		sprintf(filename, name, i % 3 + 1);
+
+		auto stone = Sprite::createWithSpriteFrameName(filename);
+
+		stone->setVisible(false);
+		_batchNode->addChild(stone, 5);
+		_stones.pushBack(stone);
+	}
+}
+
 //星球爆炸效果
-void SceneGame::AsteroidBlast(const Point& point)
+void SceneGameTwo::AsteroidBlast(const Point& point)
 {
 	ParticleSystemQuad *emitter = ParticleSystemQuad::create("Image/ExplodingRing.plist");
 	emitter->setPosition(point);
@@ -101,7 +127,7 @@ void SceneGame::AsteroidBlast(const Point& point)
 }
 
 //飞船加速效果
-void SceneGame::ShipAccelerate(const Point& point)
+void SceneGameTwo::ShipAccelerate(const Point& point)
 {
 	ParticleSystemQuad *emitter = ParticleSystemQuad::create("Image/Comet.plist");
 	emitter->setPosition(point);
@@ -109,11 +135,11 @@ void SceneGame::ShipAccelerate(const Point& point)
 	this->addChild(emitter, 10);
 }
 
-void SceneGame::InitShipLasers()
+void SceneGameTwo::InitShipLasers()
 {
 	for (int i = 0; i < KNUMLASERS; ++i)
 	{
-		auto shipLaser = Sprite::createWithSpriteFrameName("laserbeam_blue.png");
+		auto shipLaser = Sprite::createWithSpriteFrameName("shell.png");
 
 		shipLaser->setVisible(false);
 		_batchNode->addChild(shipLaser);
@@ -121,14 +147,14 @@ void SceneGame::InitShipLasers()
 	}
 }
 
-void SceneGame::initAudio()
+void SceneGameTwo::initAudio()
 {
 	SimpleAudioEngine::getInstance()->playBackgroundMusic("SpaceGame.wav", true);
 	SimpleAudioEngine::getInstance()->preloadEffect("explosion_large.wav");  //爆炸音乐
 	SimpleAudioEngine::getInstance()->preloadEffect("laser_ship.wav");       //发射激光音乐
 }
 
-float SceneGame::getTimeTick()
+float SceneGameTwo::getTimeTick()
 {
 	timeval* time = new timeval();
 
@@ -140,12 +166,12 @@ float SceneGame::getTimeTick()
 	return (float)millisecs;
 }
 
-void SceneGame::setInvisible(Node * node)
+void SceneGameTwo::setInvisible(Node * node)
 {
 	node->setVisible(false);
 }
 
-float SceneGame::randomValueBetween(float low, float high)
+float SceneGameTwo::randomValueBetween(float low, float high)
 {
 	return ((float)CCRANDOM_0_1() * (high - low)) + low;
 }
@@ -154,21 +180,21 @@ float SceneGame::randomValueBetween(float low, float high)
 // setTouchEnabled(true);
 // setTouchMode(kCCTouchesOneByOne);
 //还是能用的
-void SceneGame::onEnter()
+void SceneGameTwo::onEnter()
 {
 	Layer::onEnter();
 
 	auto listener = EventListenerTouchOneByOne::create();
 	listener->setSwallowTouches(true);
 
-	listener->onTouchBegan = CC_CALLBACK_2(SceneGame::onTouchBegan, this);
+	listener->onTouchBegan = CC_CALLBACK_2(SceneGameTwo::onTouchBegan, this);
 
 	auto dispatcher = Director::getInstance()->getEventDispatcher();
 
 	dispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 }
 
-bool SceneGame::onTouchBegan(Touch *touch, Event *event)
+bool SceneGameTwo::onTouchBegan(Touch *touch, Event *event)
 {
 	auto *shipLaser = _shipLasers.at(_nextShipLaser++);
 
@@ -180,14 +206,14 @@ bool SceneGame::onTouchBegan(Touch *touch, Event *event)
 	shipLaser->stopAllActions();
 	shipLaser->runAction(Sequence::create(
 		MoveBy::create(0.5, Point(winSize.width, 0)),
-		CCCallFuncN::create(this, callfuncN_selector(SceneGame::setInvisible)),
+		CCCallFuncN::create(this, callfuncN_selector(SceneGameTwo::setInvisible)),
 		NULL  // DO NOT FORGET TO TERMINATE WITH NULL
 		));
 
 	return true;
 }
 
-void SceneGame::onAcceleration(Acceleration* acc, Event* unused_event)
+void SceneGameTwo::onAcceleration(Acceleration* acc, Event* unused_event)
 {
 #define KFILTERINGFACTOR 0.1
 #define KRESTACCELX -0.6
@@ -206,7 +232,7 @@ void SceneGame::onAcceleration(Acceleration* acc, Event* unused_event)
 	_shipPointsPerSecY = KSHIPMAXPOINTSPERSEC * accelFraction;
 }
 
-void SceneGame::ResponseAcceleration(float dt)
+void SceneGameTwo::ResponseAcceleration(float dt)
 {
 	float maxY = winSize.height - _ship->getContentSize().height / 2;
 	float minY = _ship->getContentSize().height / 2;
@@ -217,7 +243,7 @@ void SceneGame::ResponseAcceleration(float dt)
 	_ship->setPosition(ccp(_ship->getPosition().x, newY));
 }
 
-void SceneGame::GenerationAsteroid()
+void SceneGameTwo::GenerationAsteroid()
 {
 	float curTimeMillis = getTimeTick();
 	if (curTimeMillis > _nextAsteroidSpawn)
@@ -241,15 +267,45 @@ void SceneGame::GenerationAsteroid()
 
 		asteroid->runAction(Sequence::create(
 			MoveBy::create(randDuration, Point(-winSize.width - asteroid->getContentSize().width, 0)),
-			CallFuncN::create(this, callfuncN_selector(SceneGame::setInvisible)),
+			CallFuncN::create(this, callfuncN_selector(SceneGameTwo::setInvisible)),
 			NULL
 			));
 	}
 }
 
-void SceneGame::HitCheck()
+void SceneGameTwo::GenerationStone()
 {
-	Vector<Sprite*>::iterator itAster, itLaser;
+	float curTimeMillis = getTimeTick();
+	if (curTimeMillis > _nextStoneSpawn)
+	{
+
+		float randMillisecs = randomValueBetween(0.20, 1.0) * 1000;
+		_nextStoneSpawn = randMillisecs + curTimeMillis;
+
+		float randY = randomValueBetween(0.0, winSize.height);
+		float randDuration = randomValueBetween(0.5, 2.0);
+
+		Sprite *stone = _stones.at(_nextAsteroid);
+		_nextStone++;
+
+		if (_nextStone >= _stones.size())
+			_nextStone = 0;
+
+		stone->stopAllActions();
+		stone->setPosition(Point(winSize.width + stone->getContentSize().width / 2, randY));
+		stone->setVisible(true);
+
+		stone->runAction(Sequence::create(
+			MoveBy::create(randDuration, Point(-winSize.width - stone->getContentSize().width, 0)),
+			CallFuncN::create(this, callfuncN_selector(SceneGameTwo::setInvisible)),
+			NULL
+			));
+	}
+}
+
+void SceneGameTwo::HitCheck()
+{
+	Vector<Sprite*>::iterator itAster,itLaser;
 	for (itAster = _asteroids.begin(); itAster != _asteroids.end(); itAster++)
 	{
 		auto *asteroid = (Sprite *)*itAster;

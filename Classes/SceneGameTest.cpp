@@ -32,6 +32,11 @@ bool SceneGameTest::init()
 // 	emitter->setRotation(-45.0);
 // 	this->addChild(emitter, 10);
 
+// 	Sprite* ship = Sprite::create("airplane02.png");
+// 	addChild(ship);
+// 	ship->setAnchorPoint(Point(0,0));
+// 	ship->setPosition(0,winSize.height/2);
+
 	return true;
 }
 
